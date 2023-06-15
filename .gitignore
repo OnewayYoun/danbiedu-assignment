@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.idea
+.DS_Store
+
+# C extensions
+*.so
+
+# Django-specific files
+*.sqlite3
+db.sqlite3
+
+# Secret keys and passwords
+secrets.json
+
+# Media files
+media/
+
+# Static files
+static/
+
+# Log files
+*.log
+
+mediafiles
+staticfiles
+dump.sql
