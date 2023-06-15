@@ -15,8 +15,6 @@ class UserViewSet(GenericViewSet):
         create=[AllowAny],
         update=[IsObjectOwner],
         retrieve=[IsObjectOwner],
-        validate=[AllowAny],
-        update_field=[IsObjectOwner],
     )
 
     def get_permissions(self):

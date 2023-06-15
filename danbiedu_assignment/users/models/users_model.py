@@ -24,7 +24,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     username = models.CharField(unique=True, max_length=20)
     is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField()
+
+    objects = CustomUserManager()
 
     USERNAME_FIELD = "username"
 
