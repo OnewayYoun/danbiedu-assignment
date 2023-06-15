@@ -25,6 +25,6 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", home, name="home"),
-    path('api/users', include('users.urls')),
+    path('api/', include('users.urls')),
     path('api/danbi_auth/', include('danbi_auth.urls')),
 ]
