@@ -9,7 +9,7 @@ from users.permission import IsObjectOwner
 
 
 class UserViewSet(GenericViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.select_related('team').all()
     serializer_class = UserSerializer
     permission_classes_by_action = dict(
         create=[AllowAny],
@@ -53,6 +53,6 @@ class UserViewSet(GenericViewSet):
 
     @action(detail=False, methods=["GET"])
     def self(self, request, *args, **kwargs):
-        user = request.user
+        user = self.queryset.get(id=request.user.pk)
         serializer = UserListSerializer(user)
         return Response(serializer.data)
