@@ -8,7 +8,7 @@ class Task(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     is_complete = models.BooleanField(default=False)
-    completed_date = models.DateTimeField(default=None)
+    completed_date = models.DateTimeField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -21,7 +21,7 @@ class SubTask(models.Model):
     task = models.ForeignKey('Task', on_delete=models.CASCADE)
     team = models.ForeignKey('users.Team', on_delete=models.CASCADE)
     is_complete = models.BooleanField(default=False)
-    completed_date = models.DateTimeField(default=None)
+    completed_date = models.DateTimeField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
