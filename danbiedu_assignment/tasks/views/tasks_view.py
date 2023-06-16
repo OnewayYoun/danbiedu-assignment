@@ -12,7 +12,7 @@ from users.models.users_model import User
 
 
 class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
-    queryset = Task.objects.select_related('team').prefetch_related('subtask_set').all()
+    queryset = Task.objects.select_related('team').prefetch_related('subtask_set', 'subtask_set__team').all()
     serializer_class = TaskSerializer
     permission_classes_by_action = dict(
         partial_update=[IsTaskOwner],
@@ -41,7 +41,7 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().filter(subtask__team=request.user.team)
         serializer = TaskListSerializer(queryset, many=True)
         return Response(serializer.data)
 
