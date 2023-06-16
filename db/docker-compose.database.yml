@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  db:
+    container_name: danbiedu_db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: "danbiedu"
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
