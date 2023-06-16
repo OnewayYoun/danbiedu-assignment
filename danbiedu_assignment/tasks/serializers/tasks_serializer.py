@@ -38,6 +38,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
+    team = serializers.CharField(source='team.name')
+
     class Meta:
         model = SubTask
         fields = '__all__'
