@@ -6,7 +6,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from users.serializers.users_serializer import UserSerializer, UserListSerializer
 from users.models.users_model import User
-from users.permission import IsObjectOwner
+from users.permissions.users_permission import IsUserOwner
 
 
 class UserViewSet(GenericViewSet):
@@ -14,8 +14,8 @@ class UserViewSet(GenericViewSet):
     serializer_class = UserSerializer
     permission_classes_by_action = dict(
         create=[AllowAny],
-        update=[IsObjectOwner],
-        retrieve=[IsObjectOwner],
+        update=[IsUserOwner],
+        retrieve=[IsUserOwner],
     )
 
     def get_permissions(self):
