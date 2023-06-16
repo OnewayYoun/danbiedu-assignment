@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'users',
     'danbi_auth',
+    'tasks',
 ]
 
 AUTH_USER_MODEL = "users.User"

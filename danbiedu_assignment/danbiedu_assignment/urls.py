@@ -26,5 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", home, name="home"),
     path('api/', include('users.urls')),
+    path('api/', include('tasks.urls')),
     path('api/danbi_auth/', include('danbi_auth.urls')),
 ]
