@@ -11,7 +11,6 @@ class Task(models.Model):
     completed_date = models.DateTimeField(default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    subtasks = models.ManyToManyField('SubTask', blank=True)
 
     class Meta:
         db_table = "task"
@@ -19,6 +18,7 @@ class Task(models.Model):
 
 class SubTask(models.Model):
     id = models.AutoField(primary_key=True)
+    task = models.ForeignKey('Task', on_delete=models.CASCADE)
     team = models.ForeignKey('users.Team', on_delete=models.CASCADE)
     is_complete = models.BooleanField(default=False)
     completed_date = models.DateTimeField(default=None)
