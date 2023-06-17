@@ -1,5 +1,6 @@
 from django.db.transaction import atomic
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
@@ -10,7 +11,7 @@ from tasks.serializers.tasks_serializer import (
     TaskSerializer, TaskListSerializer, TaskUpdateSerializer, SubTaskSerializer, SubTaskUpdateSerializer
 )
 from tasks.models.tasks_model import Task, SubTask
-from tasks.permissions.tasks_permission import IsTaskOwner
+from tasks.permissions.tasks_permission import IsTaskOwner, IsInSubTaskTeam
 from users.models.users_model import User
 
 
@@ -19,6 +20,7 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
     serializer_class = TaskSerializer
     permission_classes_by_action = dict(
         partial_update=[IsTaskOwner],
+        partial_update_subtask=[IsInSubTaskTeam],
     )
 
     def get_permissions(self):
@@ -59,13 +61,7 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
     def partial_update_subtask(self, request, pk, *args, **kwargs):
         task = self.get_object()
         subtask_id = self.kwargs.get('subtask_pk')
-        try:
-            subtask = SubTask.objects.get(task=task, id=subtask_id)
-        except SubTask.DoesNotExist:
-            return Response(
-                {'error': f'Subtask with task_id={task.id} and subtask_id={subtask_id} does not exist'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        subtask = get_object_or_404(SubTask, id=subtask_id, task=task)
 
         serializer = SubTaskUpdateSerializer(subtask, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
