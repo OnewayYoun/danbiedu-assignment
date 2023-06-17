@@ -27,3 +27,4 @@ class SubTask(models.Model):
 
     class Meta:
         db_table = "sub_task"
+        unique_together = ('task', 'team')
