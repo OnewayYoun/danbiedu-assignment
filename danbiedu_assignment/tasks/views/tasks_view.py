@@ -1,11 +1,13 @@
 from django.db.transaction import atomic
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework import status, mixins
+from rest_framework.decorators import action
 
 from tasks.serializers.tasks_serializer import (
-    TaskSerializer, TaskListSerializer, TaskUpdateSerializer, SubTaskSerializer
+    TaskSerializer, TaskListSerializer, TaskUpdateSerializer, SubTaskSerializer, SubTaskUpdateSerializer
 )
 from tasks.models.tasks_model import Task, SubTask
 from tasks.permissions.tasks_permission import IsTaskOwner
@@ -52,7 +54,31 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
         serializer = TaskListSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @atomic
+    @action(detail=True, methods=["PATCH"], url_path="subtasks/(?P<subtask_pk>[0-9]+)")
+    def partial_update_subtask(self, request, pk, *args, **kwargs):
+        task = self.get_object()
+        subtask_id = self.kwargs.get('subtask_pk')
+        try:
+            subtask = SubTask.objects.get(task=task, id=subtask_id)
+        except SubTask.DoesNotExist:
+            return Response(
+                {'error': f'Subtask with task_id={task.id} and subtask_id={subtask_id} does not exist'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-class SubTaskViewSet(GenericViewSet):
-    queryset = SubTask.objects.all()
-    serializer_class = SubTaskSerializer
+        serializer = SubTaskUpdateSerializer(subtask, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if serializer.validated_data.get('is_complete', False):
+            subtask.completed_date = timezone.now()
+            subtask.save()
+
+        all_subtasks_completed = task.subtask_set.filter(is_complete=False).exists()
+        if not all_subtasks_completed:
+            task.is_complete = True
+            task.completed_date = timezone.now()
+            task.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

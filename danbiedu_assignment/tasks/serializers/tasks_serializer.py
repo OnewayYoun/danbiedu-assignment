@@ -21,6 +21,12 @@ class SubTaskSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SubTaskUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubTask
+        fields = ('is_complete',)
+
+
 class TaskSerializer(serializers.ModelSerializer):
     valid_teams = ['단비', '다래', '블라블라', '철로', '땅이', '해태', '수피']
     teams = serializers.ListField(write_only=True)
