@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status, mixins
 
 from tasks.serializers.tasks_serializer import (
-    TaskSerializer, TaskListSerializer, SubTaskSerializer
+    TaskSerializer, TaskListSerializer, TaskUpdateSerializer, SubTaskSerializer
 )
 from tasks.models.tasks_model import Task, SubTask
 from tasks.permissions.tasks_permission import IsTaskOwner
@@ -13,7 +13,7 @@ from users.models.users_model import User
 
 
 class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
-    queryset = Task.objects.select_related('team').prefetch_related('subtask_set', 'subtask_set__team').all()
+    queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes_by_action = dict(
         partial_update=[IsTaskOwner],
@@ -36,14 +36,19 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
     @atomic
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = TaskUpdateSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
         user = request.user
-        queryset = self.get_queryset().filter(Q(subtask__team=user.team) | Q(create_user=user)).distinct()
+        queryset = (
+            self.get_queryset()
+            .select_related('team')
+            .prefetch_related('subtask_set', 'subtask_set__team')
+            .filter(Q(subtask__team=user.team) | Q(create_user=user)).distinct()
+        )
         serializer = TaskListSerializer(queryset, many=True)
         return Response(serializer.data)
 
