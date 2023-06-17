@@ -1,4 +1,5 @@
 from django.db.transaction import atomic
+from django.db.models import Q
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework import status, mixins
@@ -41,7 +42,8 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(subtask__team=request.user.team)
+        user = request.user
+        queryset = self.get_queryset().filter(Q(subtask__team=user.team) | Q(create_user=user)).distinct()
         serializer = TaskListSerializer(queryset, many=True)
         return Response(serializer.data)
 
