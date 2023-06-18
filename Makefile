@@ -15,4 +15,4 @@ migrate:
 	python danbiedu_assignment/manage.py migrate
 
 test:
-	python danbiedu_assignment/manage.py test tasks.tests
+	python danbiedu_assignment/manage.py test tasks.tests -v2
