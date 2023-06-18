@@ -26,7 +26,7 @@ make db_down
 make migrate
 ```
 
-# how to test assignment
+# How to test assignment
 
 ```bash
 make test
