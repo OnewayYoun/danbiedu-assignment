@@ -10,3 +10,9 @@ db_up:
 
 db_down:
 	make docker_compose command=down
+
+migrate:
+	python danbiedu_assignment/manage.py migrate
+
+test:
+	python danbiedu_assignment/manage.py test tasks.tests

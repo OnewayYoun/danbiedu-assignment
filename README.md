@@ -19,3 +19,15 @@ make db_up
 ```bash
 make db_down
 ```
+
+# How to migrate
+
+```bash
+make migrate
+```
+
+# how to test assignment
+
+```bash
+make test
+```
