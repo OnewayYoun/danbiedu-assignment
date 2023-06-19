@@ -71,8 +71,8 @@ class TaskViewSet(mixins.UpdateModelMixin, GenericViewSet):
             subtask.completed_date = timezone.now()
             subtask.save()
 
-        all_subtasks_completed = task.subtask_set.filter(is_complete=False).exists()
-        if not all_subtasks_completed:
+        all_subtasks_completed = not task.subtask_set.filter(is_complete=False).exists()
+        if all_subtasks_completed:
             task.is_complete = True
             task.completed_date = timezone.now()
             task.save()
